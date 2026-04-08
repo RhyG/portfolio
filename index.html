@@ -332,6 +332,12 @@
       letter-spacing: 1px;
     }
 
+    .value-with-dot {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
     .status-item .item-sub {
       font-size: 11px;
       color: var(--text-faint);
@@ -346,6 +352,11 @@
       margin-right: 4px;
       box-shadow: 0 0 6px var(--green);
       animation: ping 2s ease-in-out infinite;
+    }
+
+    .value-with-dot .ping-dot {
+      margin-right: 0;
+      flex-shrink: 0;
     }
 
     @keyframes ping {
@@ -514,7 +525,7 @@
               </div>
               <div class="identity-field">
                 <div class="field-label">Status</div>
-                <div class="field-value"><span class="ping-dot"></span>ACTIVE</div>
+                <div class="field-value value-with-dot"><span class="ping-dot"></span>ACTIVE</div>
               </div>
               <div class="identity-field">
                 <div class="field-label">Re-Deployment Availability</div>
@@ -598,7 +609,7 @@
           <div class="panel-body">
             <div class="status-item" style="border:none; padding: 4px 0;">
               <div class="item-label">Base of Operations</div>
-              <div class="item-value" id="anchor-loc"><span class="ping-dot"></span>BRISBANE, AUSTRALIA</div>
+              <div class="item-value value-with-dot" id="anchor-loc"><span class="ping-dot"></span>BRISBANE, AUSTRALIA</div>
               <div class="item-sub">SECTOR: QLD-AU &nbsp;·&nbsp; TZ: AEST+10</div>
             </div>
           </div>
