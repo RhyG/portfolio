@@ -5,6 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>GEARY_R // PERSONNEL REGISTRY</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23010c03'/%3E%3Crect width='32' height='32' fill='none' stroke='%2300ff41' stroke-width='2'/%3E%3Ctext x='16' y='22' font-family='monospace' font-size='16' font-weight='bold' fill='%2300ff41' text-anchor='middle'%3ERG%3C/text%3E%3C/svg%3E">
+  <script>
+    try {
+      if (!localStorage.getItem('registryBootSeen')) {
+        document.documentElement.classList.add('boot-off');
+      }
+    } catch (error) {
+      document.documentElement.classList.add('boot-off');
+    }
+  </script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap');
 
@@ -444,6 +453,10 @@
       transform-origin: center center;
     }
 
+    html.boot-off #screen-wrap {
+      visibility: hidden;
+    }
+
     #standby {
       position: fixed;
       inset: 0;
@@ -458,6 +471,7 @@
       transition: opacity 0.15s;
     }
 
+    html.boot-off #standby,
     #standby.visible {
       opacity: 1;
       pointer-events: all;
@@ -699,7 +713,14 @@
     // ─── CRT SHUTDOWN / STARTUP ───
     const screenWrap = document.getElementById('screen-wrap');
     const standby    = document.getElementById('standby');
-    let screenState  = 'on';
+    const bootOff    = document.documentElement.classList.contains('boot-off');
+    let screenState  = bootOff ? 'off' : 'on';
+
+    if (bootOff) {
+      standby.classList.add('visible');
+      screenWrap.style.visibility = 'hidden';
+      document.documentElement.classList.remove('boot-off');
+    }
 
     function shutdown() {
       if (screenState !== 'on') return;
@@ -726,6 +747,9 @@
     function startup() {
       if (screenState !== 'off') return;
       screenState = 'starting-up';
+      try {
+        localStorage.setItem('registryBootSeen', '1');
+      } catch (error) {}
 
       standby.classList.remove('visible');
 
@@ -778,8 +802,8 @@
     }
 
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') { e.preventDefault(); shutdown(); return; }
       if (screenState === 'off') { startup(); return; }
+      if (e.key === 'Escape') { e.preventDefault(); shutdown(); return; }
       if (e.key === 'F1') { e.preventDefault(); moveCursor('F1'); }
       if (e.key === 'F2') { e.preventDefault(); moveCursor('F2'); }
       if (e.key === 'F3') { e.preventDefault(); moveCursor('F3'); }
@@ -797,6 +821,7 @@
       }
     });
 
+    standby.addEventListener('click', startup);
     standby.addEventListener('touchstart', (e) => { e.preventDefault(); startup(); }, { passive: false });
   </script>
 </body>
